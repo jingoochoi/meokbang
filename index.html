@@ -8,11 +8,12 @@
 </head>
 <body>
 <div id="map" style="width:100%;height:350px;"></div>
-
+<input type="text" class="open"><button>GO</button>
 <script>
 // 마커를 클릭하면 장소명을 표출할 인포윈도우 입니다
 var infowindow = new kakao.maps.InfoWindow({zIndex:1});
-
+var test=$('.open').val()
+console.log(test)
 var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
     mapOption = {
         center: new kakao.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
@@ -26,7 +27,10 @@ var map = new kakao.maps.Map(mapContainer, mapOption);
 var ps = new kakao.maps.services.Places(); 
 
 // 키워드로 장소를 검색합니다
-ps.keywordSearch('이태원 맛집', placesSearchCB); 
+$('button').click(function () {
+    ps.keywordSearch(`맛있는 녀석들 ${test}`, placesSearchCB); 
+    // console.log(test)
+})
 
 // 키워드 검색 완료 시 호출되는 콜백함수 입니다
 function placesSearchCB (data, status, pagination) {
