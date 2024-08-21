@@ -2,13 +2,16 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>키워드로 장소검색하기</title>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=f20feea3fae6d976c3a2291a16beb8ec&libraries=services"></script>
 </head>
 <body>
-<div id="map" style="width:100%;height:350px;"></div>
-<input type="text" class="open" autofocus>
+<div id="map" style="width: 300px;height:300px;margin: auto;"></div>
+<form action="" style="text-align: center;">
+    <input type="text" class="open" autofocus style="margin: auto;text-align: center;" placeholder="지역이름">
+</form>
 <script>
 // 마커를 클릭하면 장소명을 표출할 인포윈도우 입니다
 var infowindow = new kakao.maps.InfoWindow({zIndex:1});
@@ -63,7 +66,8 @@ function displayMarker(place) {
     // 마커에 클릭이벤트를 등록합니다
     kakao.maps.event.addListener(marker, 'click', function() {
         // 마커를 클릭하면 장소명이 인포윈도우에 표출됩니다
-        infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
+        infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '<br>' + `<a href=${place.place_url}>` + 'homepage' + '</a>' + '</div>');
+        console.log(place)
         infowindow.open(map, marker);
     });
 }
