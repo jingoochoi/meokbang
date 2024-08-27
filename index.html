@@ -19,10 +19,9 @@
     <span onclick="zoomIn()"><img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_plus.png" alt="확대"></span>  
     <span onclick="zoomOut()"><img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_minus.png" alt="축소"></span>
 </div>
-<form action="" style="text-align: center;">
-    <input type="text" class="open" autofocus style="margin: auto;text-align: center;" placeholder="지역이름">
-</form>
+
 <script>
+
 // 마커를 클릭하면 장소명을 표출할 인포윈도우 입니다
 var infowindow = new kakao.maps.InfoWindow({zIndex:1});
 var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
@@ -44,54 +43,73 @@ function zoomOut() {
 }
 // 장소 검색 객체를 생성합니다
 var ps = new kakao.maps.services.Places(); 
+fetch('data.json')
+  .then(response => response.json())
+  .then(data => {
+    var geocoder = new kakao.maps.services.Geocoder();
+    for (let i = 0; i < data.length; i++) {
+        geocoder.addressSearch(`${data[i].address}`, function(result, status) {
 
-// 키워드로 장소를 검색합니다
-$( "input" )
-  .on( "keyup", function() {
-    var value = $( this ).val();
-    ps.keywordSearch(`맛있는 녀석들 ${value}`, placesSearchCB); 
-  } ).trigger( "keyup" )
-    // console.log(test)
+// 정상적으로 검색이 완료됐으면 
+ if (status === kakao.maps.services.Status.OK) {
 
+    var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 
-// 키워드 검색 완료 시 호출되는 콜백함수 입니다
-function placesSearchCB (data, status, pagination) {
-    if (status === kakao.maps.services.Status.OK) {
-
-        // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
-        // LatLngBounds 객체에 좌표를 추가합니다
-        var bounds = new kakao.maps.LatLngBounds();
-
-        for (var i=0; i<data.length; i++) {
-            displayMarker(data[i]);    
-            bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
-        }       
-
-        // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
-        map.setBounds(bounds);
-    } 
-}
-
-// 지도에 마커를 표시하는 함수입니다
-function displayMarker(place) {
-    
-    // 마커를 생성하고 지도에 표시합니다
+    // 결과값으로 받은 위치를 마커로 표시합니다
     var marker = new kakao.maps.Marker({
         map: map,
-        position: new kakao.maps.LatLng(place.y, place.x) 
+        position: coords
     });
 
-    // 마커에 클릭이벤트를 등록합니다
-    kakao.maps.event.addListener(marker, 'click', function() {
-        // 마커를 클릭하면 장소명이 인포윈도우에 표출됩니다
-        infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '<br>' + `<a href=${place.place_url}>` + 'homepage' + '</a>' + '</div>');
-        console.log(place)
-        infowindow.open(map, marker);
-        setTimeout(() => {
-            infowindow.close()
-        }, 3000);
+    // 인포윈도우로 장소에 대한 설명을 표시합니다
+    var infowindow = new kakao.maps.InfoWindow({
+        content: `<div style="width:150px;text-align:center;padding:6px 0;">${data[i].name}<br>${data[i].menu}<br>${data[i].address}</div>`
     });
+    kakao.maps.event.addListener(marker, 'click', function() {
+    infowindow.open(map, marker); // 마커를 클릭하면 인포윈도우를 엽니다
+
+    // 3초 후에 인포윈도우를 닫습니다 (원하지 않으면 이 부분을 제거)
+    setTimeout(() => {
+        infowindow.close();
+    }, 3000);
+});
+
+
+    // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+    if (navigator.geolocation) {
+    
+    // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+    navigator.geolocation.getCurrentPosition(function(position) {
+        
+        var lat = position.coords.latitude, // 위도
+            lon = position.coords.longitude; // 경도
+        
+        var locPosition = new kakao.maps.LatLng(lat, lon)
+        
+        // 마커와 인포윈도우를 표시합니다
+        map.setCenter(locPosition);
+        map.setLevel(5);
+      });
+    
+} else { // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
+    
+    var locPosition = new kakao.maps.LatLng(33.450701, 126.570667),    
+        message = 'geolocation을 사용할수 없어요..'
+        
+    
 }
+    // map.setCenter(coords);
+} //if
+});    
+    }//for
+    
+        
+        
+  })
+  .catch(error => {
+    console.error('Error fetching JSON:', error);
+  });
+
 </script>
 </body>
 </html>
