@@ -63,7 +63,7 @@ fetch('data.json')
 
     // 인포윈도우로 장소에 대한 설명을 표시합니다
     var infowindow = new kakao.maps.InfoWindow({
-        content: `<div style="width:150px;text-align:center;padding:6px 0;">${data[i].name}<br>${data[i].menu}<br>${data[i].address}</div>`
+        content: `<div style="width:200px;text-align:center;padding:6px 0;font-size:12px;">${data[i].name}<br>${data[i].menu}<br>${data[i].address}</div>`
     });
     kakao.maps.event.addListener(marker, 'click', function() {
     infowindow.open(map, marker); // 마커를 클릭하면 인포윈도우를 엽니다
