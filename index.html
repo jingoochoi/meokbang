@@ -19,7 +19,7 @@
     <span onclick="zoomIn()"><img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_plus.png" alt="확대"></span>  
     <span onclick="zoomOut()"><img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_minus.png" alt="축소"></span>
 </div>
-<p id="status" style="text-align: center;">위치 정보를 가져오는 중...</p>
+<p id="status" style="text-align: center;"></p>
 <script>
 
 // 마커를 클릭하면 장소명을 표출할 인포윈도우 입니다
@@ -84,7 +84,7 @@ function getLocation() {
         }
 
         function showPosition(position) {
-            document.getElementById('status').innerHTML = "로딩완료";
+            
             // 위치 정보를 표시
             var latitude = position.coords.latitude;
             var longitude = position.coords.longitude;
