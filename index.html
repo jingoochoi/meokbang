@@ -19,7 +19,7 @@
     <span onclick="zoomIn()"><img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_plus.png" alt="확대"></span>  
     <span onclick="zoomOut()"><img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_minus.png" alt="축소"></span>
 </div>
-
+<p id="status" style="text-align: center;">위치 정보를 가져오는 중...</p>
 <script>
 
 // 마커를 클릭하면 장소명을 표출할 인포윈도우 입니다
@@ -67,37 +67,55 @@ fetch('data.json')
     });
     kakao.maps.event.addListener(marker, 'click', function() {
     infowindow.open(map, marker); // 마커를 클릭하면 인포윈도우를 엽니다
-
+    
     // 3초 후에 인포윈도우를 닫습니다 (원하지 않으면 이 부분을 제거)
     setTimeout(() => {
         infowindow.close();
     }, 3000);
 });
 
+function getLocation() {
+            // 위치 정보 지원 여부 확인
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                document.getElementById('status').innerHTML = "이 브라우저에서는 위치 추적을 지원하지 않습니다.";
+            }
+        }
 
-    // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
-    if (navigator.geolocation) {
-    
-    // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-    navigator.geolocation.getCurrentPosition(function(position) {
-        
-        var lat = position.coords.latitude, // 위도
-            lon = position.coords.longitude; // 경도
-        
-        var locPosition = new kakao.maps.LatLng(lat, lon)
+        function showPosition(position) {
+            document.getElementById('status').innerHTML = "로딩완료";
+            // 위치 정보를 표시
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            var locPosition = new kakao.maps.LatLng(latitude, longitude)
         
         // 마커와 인포윈도우를 표시합니다
         map.setCenter(locPosition);
         map.setLevel(5);
-      });
-    
-} else { // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
-    
-    var locPosition = new kakao.maps.LatLng(33.450701, 126.570667),    
-        message = 'geolocation을 사용할수 없어요..'
         
-    
-}
+        }
+
+        function showError(error) {
+            // 에러 처리
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    document.getElementById('status').innerHTML = "위치 정보 제공이 거부되었습니다.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    document.getElementById('status').innerHTML = "위치 정보를 사용할 수 없습니다.";
+                    break;
+                case error.TIMEOUT:
+                    document.getElementById('status').innerHTML = "위치 정보를 가져오는 시간이 초과되었습니다.";
+                    break;
+                case error.UNKNOWN_ERROR:
+                    document.getElementById('status').innerHTML = "알 수 없는 오류가 발생했습니다.";
+                    break;
+            }
+        }
+
+        // 페이지 로드 시 위치 정보 요청
+        window.onload = getLocation;
     // map.setCenter(coords);
 } //if
 });    
