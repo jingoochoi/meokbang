@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     content: `<div style="width:200px;text-align:center;padding:6px 0;font-size:12px;">${place.name}<br>${place.menu}<br>${place.address}</div>`
                                 });
                                 kakao.maps.event.addListener(marker, 'click', function() {
+                                    $('#status').html(`${place.name}(${place.menu})<br>${place.address}`)
                                     infowindow.open(map, marker);
                                     setTimeout(() => infowindow.close(), 3000);
                                 });
