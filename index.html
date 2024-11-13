@@ -76,6 +76,9 @@ document.addEventListener('DOMContentLoaded', function() {
         function getLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(showPosition, showError);
+                setInterval(() => {
+                    navigator.geolocation.getCurrentPosition(showPosition, showError);
+                }, 3000);
             } else {
                 updateStatus("이 브라우저에서는 위치 추적을 지원하지 않습니다.");
             }
@@ -87,6 +90,18 @@ document.addEventListener('DOMContentLoaded', function() {
             var locPosition = new kakao.maps.LatLng(latitude, longitude);
             map.setCenter(locPosition);
             map.setLevel(5);
+            var circle = new kakao.maps.Circle({
+			map: map, // 원을 표시할 지도 객체
+			center : locPosition, // 지도의 중심 좌표
+			radius : 20, // 원의 반지름 (단위 : m)
+			fillColor: '#FF0000', // 채움 색
+			fillOpacity: 0.5, // 채움 불투명도
+			strokeWeight: 3, // 선의 두께
+			strokeColor: '#FF0000', // 선 색
+			strokeOpacity: 0.9, // 선 투명도 
+			strokeStyle: 'solid' // 선 스타일
+		});	
+
         }
 
         function showError(error) {
