@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function getLocation() {
             if (navigator.geolocation) {
-                navigator.geolocation.watchPosition(showPosition, showError);
+                navigator.geolocation.watchPosition(showPosition, showError,{enableHighAccuracy:true});
                 
             } else {
                 updateStatus("이 브라우저에서는 위치 추적을 지원하지 않습니다.");
